@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head">
+</head>
+
+<body>
+	<header th:replace="layout/layout :: header"></header>
+
+	<div class="container py-4">
+		<div class="card bg-light">
+			<div class="card-header" th:text="${titulo}"></div>
+			<div class="card-body">
+
+				<h4 class="card-title">
+					<a th:href="@{/listar}" class="btn btn-primary btn-xs">Seguir
+						comprando</a>
+				</h4>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>NOMBRE</th>
+							<th>CATEGORIA</th>
+							<th>DESCRIPCION</th>
+							<th>PRECIO</th>
+							<th>TOTAL</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="producto: ${miCarrito}">
+							<th th:text="${producto.nombre}"></th>
+							<th th:text="${producto.categoria}"></th>
+							<th th:text="${producto.descripcion}"></th>
+							<th th:text="${producto.precio}"></th>
+							<th th:text="${producto.precio}"></th>
+						</tr>
+					</tbody>
+				</table>
+
+				<div class="p-2 bd-highlight d-flex justify-content-end">
+					<span class="font-italic font-weight-bold lead">TOTAL:</span>
+					<div class="font-italic lead" style="font-weight: bold;" th:text="'$'+${total}"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer th:replace="layout/layout :: footer"></footer>
+
+</body>
+</html>
+
+

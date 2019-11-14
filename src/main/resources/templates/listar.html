@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout :: head">
+</head>
+
+<body>
+	<header th:replace="layout/layout :: header"></header>
+
+	<div class="container py-4">
+		<div class="card bg-light">
+			<div class="card-header" th:text="${titulo}"></div>
+			<div class="card-body">
+
+				<h4 class="card-title">
+					<a th:href="@{/listaCarrito}" class="btn btn-primary btn-xs">Mi
+						Carrito</a> <a sec:authorize="hasRole('ROLE_ADMIN')"
+						th:href="@{/agregarProducto}"
+						class="btn btn-primary btn-xs btn-xs"> Agregar Producto</a>
+				</h4>
+
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>DETALLE</th>
+								<th>NOMBRE</th>
+								<th>CATEGORIA</th>
+								<th>DESCRIPCI&Oacute;N</th>
+								<th>IMAGEN</th>
+								<th>PRECIO</th>
+								<th>AGREGAR AL CARRITO</th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')">ELIMINAR DEL
+									CARRITO</th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')">EDITAR PRODUCTO</th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')">ELIMINAR PRODUCTO</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="producto: ${productos}">
+								<th><a class="btn btn-primary btn-xs"
+									th:href="@{/ver/} + ${producto.id}">Ver Detalle</a></th>
+								<th th:text="${producto.nombre}"></th>
+								<th th:text="${producto.categoria}"></th>
+								<th th:text="${producto.descripcion}"></th>
+								<th><img th:if="${#strings.length(producto.url) > 0}"
+									class="img-thumbnail rounded float-left"
+									style="max-width: 60px;"
+									th:src="@{'/uploads/' + ${producto.url}}"></th>
+								<th th:text="${producto.precio}"></th>
+								<th><a class="btn btn-primary btn-xs"
+									th:href="@{/agregar/} + ${producto.id}"
+									th:text="'Agregar al Carrito'"></a></th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')"><a
+									class="btn btn-primary btn-xs"
+									th:href="@{/eliminarCarrito/} + ${producto.id}"
+									th:text="'Eliminar del Carrito'"></a></th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')"><a
+									class="btn btn-primary btn-xs"
+									th:href="@{/editar/} + ${producto.id}" th:text="'Editar'"></a></th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')"><a
+									class="btn btn-danger btn-xs"
+									th:href="@{/eliminar/} + ${producto.id}" th:text="'Eliminar'"
+									onclick="return confirm('Está seguro que quiere eliminar este producto de la lista?');"></a></th>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="row justify-content-center">
+					<nav th:replace="layout/paginator-nav :: paginator"></nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer th:replace="layout/layout :: footer"></footer>
+</body>
+</html>
+
+
