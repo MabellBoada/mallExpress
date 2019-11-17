@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.mall.express.app.models.entity.Producto;
 import com.mall.express.app.models.service.IProductoService;
 import com.mall.express.app.util.paginator.PageRender;
+import com.mall.express.app.models.service.IUploadFileService;
 
 @SuppressWarnings("serial")
 @Controller
@@ -53,7 +55,7 @@ public class ProductoController implements Serializable {
 	private IProductoService productoService;
 
 	@Autowired
-	private com.mall.express.app.models.service.IUploadFileService uploadFileService;
+	private IUploadFileService uploadFileService;
 
 	@GetMapping(value = "/uploads/{filename:.+}")
 	public ResponseEntity<Resource> verFoto(@PathVariable String filename) {
@@ -112,7 +114,7 @@ public class ProductoController implements Serializable {
 	public String guardar(@Valid Producto producto, BindingResult result, Model model,
 			@RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status) {
 		if (!creado) {
-			prod.setCantidad((long) 1);
+			prod.setCantidad(1);
 			prod.setCategoria(producto.getCategoria());
 			prod.setDescripcion(producto.getDescripcion());
 			prod.setNombre(producto.getNombre());
@@ -143,25 +145,52 @@ public class ProductoController implements Serializable {
 		return "redirect:/listar";
 	}
 
-	@RequestMapping(value = "/agregar/{id}")
-	public String agregarCarrito(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
+	@RequestMapping(value = "/agregar/{id}/{cantidad}", method = RequestMethod.POST)
+	public String agregarCarrito(@PathVariable("id") Long id,
+			@RequestParam(value = "cantidad", defaultValue = "1") Integer cantidad, RedirectAttributes flash) {
 		Producto producto = productoService.buscarProductoXId(id);
+		producto.setCantidad(cantidad);
+		producto.setTotal(producto.getPrecio() * cantidad);
+		System.out.println(cantidad);
 		miCarrito.add(producto);
-		flash.addFlashAttribute("info", "Has agregado: " + producto.getNombre() + " a tu carrito ");
+		flash.addFlashAttribute("info", "Has agregado: " + cantidad + " " + producto.getNombre() + " a tu carrito ");
 		return "redirect:/listar";
 	}
 
-	@RequestMapping(value = "/listaCarrito", method = RequestMethod.GET)
+	@RequestMapping(value = "/eliminarCarrito/{id}")
+	public String eliminarCarrito(@PathVariable("id") Long id, RedirectAttributes flash) {
+		Producto producto = new Producto();
+		for (Producto prod : miCarrito) {
+			if (prod.getId() == id) {
+				producto = prod;
+				break;
+			}
+		}
+		miCarrito.remove(producto);
+		if (producto.getNombre() != null) {
+			flash.addFlashAttribute("info", "Has eliminado: " + producto.getNombre() + " de tu carrito ");
+		} else {
+			flash.addFlashAttribute("info", "Este producto no está agregado en tu carrito ");
+		}
+		return "redirect:/listar";
+	}
+
+	@RequestMapping(value = "/listaCarrito")
 	public String listaCarrito(Model model) {
 		total = (long) 0d;
 		for (Producto producto : miCarrito) {
-			total += producto.getPrecio();
+			total += producto.getTotal();
 		}
 		model.addAttribute("titulo", "Mi Carrito");
 		model.addAttribute("miCarrito", miCarrito);
 		model.addAttribute("total", total);
 		return "listaCarrito";
 	}
+
+//	@RequestMapping(value = "/generarPdf")
+//	public String generarPdf() throws Exception {
+//		return "listaCarrito";
+//	}
 
 	@RequestMapping(value = "/eliminar/{id}")
 	public String eliminar(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
@@ -203,17 +232,5 @@ public class ProductoController implements Serializable {
 	public void setTotal(Long total) {
 		this.total = total;
 	}
-
-//	@RequestMapping(value = "/listar/{categoria}", method = RequestMethod.GET)
-//	public String listarFiltro(@PathVariable(value = "categoria") String categoria,
-//			@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
-//		Pageable pageRequest = PageRequest.of(page, 4);
-//		Page<Producto> productos = productoService.listaProductosPorCategoria(categoria, pageRequest);
-//		PageRender<Producto> pageRender = new PageRender<>("/listar", productos);
-//		model.addAttribute("titulo", "Lista de Productos");
-//		model.addAttribute("productos", productos);
-//		model.addAttribute("page", pageRender);
-//		return "listar";
-//	}
 
 }

@@ -35,7 +35,10 @@ public class Producto implements Serializable {
 	private Long precio;
 
 	@Transient
-	private Long cantidad;
+	private Integer cantidad;
+
+	@Transient
+	private Long total;
 
 	public Long getId() {
 		return id;
@@ -85,12 +88,20 @@ public class Producto implements Serializable {
 		this.precio = precio;
 	}
 
-	public Long getCantidad() {
+	public Integer getCantidad() {
 		return cantidad;
 	}
 
-	public void setCantidad(Long cantidad) {
+	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
+	}
+
+	public Long getTotal() {
+		return total;
+	}
+
+	public void setTotal(Long total) {
+		this.total = total;
 	}
 
 }

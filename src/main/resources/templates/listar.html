@@ -12,11 +12,12 @@
 			<div class="card-header" th:text="${titulo}"></div>
 			<div class="card-body">
 
+
 				<h4 class="card-title">
-					<a th:href="@{/listaCarrito}" class="btn btn-primary btn-xs">Mi
+					<a th:href="@{/listaCarrito}" class="btn btn-success btn-lg">Mi
 						Carrito</a> <a sec:authorize="hasRole('ROLE_ADMIN')"
 						th:href="@{/agregarProducto}"
-						class="btn btn-primary btn-xs btn-xs"> Agregar Producto</a>
+						class="btn btn-primary btn-xs btn-lg"> Agregar Producto</a>
 				</h4>
 
 				<div class="table-responsive">
@@ -29,9 +30,8 @@
 								<th>DESCRIPCI&Oacute;N</th>
 								<th>IMAGEN</th>
 								<th>PRECIO</th>
-								<th>AGREGAR AL CARRITO</th>
-								<th sec:authorize="hasRole('ROLE_ADMIN')">ELIMINAR DEL
-									CARRITO</th>
+								<th>CANTIDAD</th>
+								<th></th>
 								<th sec:authorize="hasRole('ROLE_ADMIN')">EDITAR PRODUCTO</th>
 								<th sec:authorize="hasRole('ROLE_ADMIN')">ELIMINAR PRODUCTO</th>
 								<th></th>
@@ -39,7 +39,7 @@
 						</thead>
 						<tbody>
 							<tr th:each="producto: ${productos}">
-								<th><a class="btn btn-primary btn-xs"
+								<th><a class="btn btn-primary btn-sm"
 									th:href="@{/ver/} + ${producto.id}">Ver Detalle</a></th>
 								<th th:text="${producto.nombre}"></th>
 								<th th:text="${producto.categoria}"></th>
@@ -49,18 +49,28 @@
 									style="max-width: 60px;"
 									th:src="@{'/uploads/' + ${producto.url}}"></th>
 								<th th:text="${producto.precio}"></th>
-								<th><a class="btn btn-primary btn-xs"
-									th:href="@{/agregar/} + ${producto.id}"
-									th:text="'Agregar al Carrito'"></a></th>
-								<th sec:authorize="hasRole('ROLE_ADMIN')"><a
-									class="btn btn-primary btn-xs"
+								<th>
+									<form
+										th:action="@{/agregar/} + ${producto.id} + '/' + ${producto.cantidad}"
+										th:object="${producto}" method="post">
+										<div class="col-sm-4">
+											<input class="form-control" id="cantidad" type="number"
+												min="1" pattern="^[0-9]+" value="1" th:name="cantidad" />
+										</div>
+										<div class="col-sm-6">
+											<input type="submit" value="Agregar al carrito"
+												class="btn btn-primary btn-sm" />
+										</div>
+									</form>
+								</th>
+								<th><a class="btn btn-primary btn-sm"
 									th:href="@{/eliminarCarrito/} + ${producto.id}"
 									th:text="'Eliminar del Carrito'"></a></th>
 								<th sec:authorize="hasRole('ROLE_ADMIN')"><a
-									class="btn btn-primary btn-xs"
+									class="btn btn-primary btn-sm"
 									th:href="@{/editar/} + ${producto.id}" th:text="'Editar'"></a></th>
 								<th sec:authorize="hasRole('ROLE_ADMIN')"><a
-									class="btn btn-danger btn-xs"
+									class="btn btn-danger btn-sm"
 									th:href="@{/eliminar/} + ${producto.id}" th:text="'Eliminar'"
 									onclick="return confirm('Está seguro que quiere eliminar este producto de la lista?');"></a></th>
 							</tr>

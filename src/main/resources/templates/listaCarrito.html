@@ -11,18 +11,21 @@
 			<div class="card-header" th:text="${titulo}"></div>
 			<div class="card-body">
 
-				<h4 class="card-title">
-					<a th:href="@{/listar}" class="btn btn-primary btn-xs">Seguir
-						comprando</a>
-				</h4>
+				<div class="d-flex float-right">
+					<h4 class="card-title">
+						<a th:href="@{/listar}" class="btn btn-primary">Seguir
+							comprando</a>
+					</h4>
+				</div>
 
 				<table class="table table-striped">
-					<thead>
+					<thead class="thead-inverse">
 						<tr>
 							<th>NOMBRE</th>
 							<th>CATEGORIA</th>
 							<th>DESCRIPCION</th>
 							<th>PRECIO</th>
+							<th>CANTIDAD</th>
 							<th>TOTAL</th>
 						</tr>
 					</thead>
@@ -32,15 +35,23 @@
 							<th th:text="${producto.categoria}"></th>
 							<th th:text="${producto.descripcion}"></th>
 							<th th:text="${producto.precio}"></th>
-							<th th:text="${producto.precio}"></th>
+							<th th:text="${producto.cantidad}"></th>
+							<th th:text="${producto.total}"></th>
 						</tr>
 					</tbody>
 				</table>
 
 				<div class="p-2 bd-highlight d-flex justify-content-end">
 					<span class="font-italic font-weight-bold lead">TOTAL:</span>
-					<div class="font-italic lead" style="font-weight: bold;" th:text="'$'+${total}"></div>
+					<div class="font-italic lead" style="font-weight: bold;"
+						th:text="'  '+'$'+${total}"></div>
 				</div>
+
+				<h4 class="card-title">
+					<a class="btn btn-danger float-right"
+						th:href="@{'listaCarrito/'(format=pdf)}">Generar Factura</a>
+				</h4>
+
 			</div>
 		</div>
 	</div>
